@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'Module to authorize sales quotes with price and discount greater than normal',
+    'name': 'Module to authorize sales quotes with price and discount greater than normal, one approve, and two levels approval',
     'version': '1.0',
     'summary': 'Add features to the authorization of a sales order',
     'license': 'AGPL-3',
