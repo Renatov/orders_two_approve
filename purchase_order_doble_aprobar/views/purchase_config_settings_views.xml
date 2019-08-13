@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sales_config_aprobar_venta" model="ir.ui.view">
+        <field name="name">sale settings doble aprove purchase</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='purchase_setting_container']/div[2]" position="after">
+               <div class="col-12 col-lg-6 o_setting_box"  attrs="{'invisible': [('po_order_approval', '=', False)]}">
+	               <div class="o_setting_left_pane">
+                       <field name="two_approval_purchase"/>
+                   </div>
+	               <div class="o_setting_right_pane">
+	                    <label for="two_approval_purchase"/>
+	                    <div class="content-group">
+	                    <div class="row mt16"><label for="users_one_approval_purchase" class="o_form_label col-lg-4 o_light_label"/>
+	                    <field name="users_one_approval_purchase" widget="many2many_tags" attrs="{'invisible': [('two_approval_purchase', '=', False)],
+	                    										  'required': [('two_approval_purchase', '=', True)],}"/>
+	                    </div>
+	                    <div class="row mt16"><label for="users_two_approval_purchase" class="o_form_label col-lg-4 o_light_label"/> 
+	                    <field name="users_two_approval_purchase" widget="many2many_tags" attrs="{'invisible': [('two_approval_purchase', '=', False)], 
+	                                                             'required': [('two_approval_purchase', '=', True)],}"/></div>
+	                	</div>
+	                </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
