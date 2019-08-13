@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sales_config_aprobar_venta" model="ir.ui.view">
+        <field name="name">sale settings aprove sales</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='row mt16 o_settings_container'][5]" position="after">
+               <h2>Aprobar ventas</h2>
+               <div class="row mt16 o_settings_container">
+	               <div class="o_setting_box col-10 col-lg-6">
+	               		<div class="o_setting_right_pane"><label for="monto_permitido"/>
+	                    <field name="monto_permitido"/></div>
+	                    <div class="o_setting_right_pane"><label for="controlar_porcentaje"/>
+	                    <field name="controlar_porcentaje"/></div>
+	                    <div class="o_setting_right_pane"><label for="enviar_correo"/>
+	                    <field name="enviar_correo"/></div>
+	                    <div class="o_setting_right_pane"><label for="two_approval"/>
+	                    <field name="two_approval"/></div>
+	                    <div class="o_setting_right_pane"><label for="users_one_approval"/>
+	                    <field name="users_one_approval" widget="many2many_tags" attrs="{'invisible': [('two_approval', '=', False)],
+	                    										  'required': [('two_approval', '=', True)],}"/>
+	                    </div>
+	                    <div class="o_setting_right_pane"><label for="users_two_approval"/> 
+	                    <field name="users_two_approval" widget="many2many_tags" attrs="{'invisible': [('two_approval', '=', False)], 
+	                                                             'required': [('two_approval', '=', True)],}"/></div>
+	                </div>
+                </div>
+                <div class="row mt16 o_settings_container">
+                <div class="o_setting_box col-10 col-lg-6">
+	                <div class="o_setting_right_pane"><label for="ip_notificacion"/>
+                    <field name="ip_notificacion"/></div>
+                    <div class="o_setting_right_pane"><label for="port_notificacion"/>
+                    <field name="port_notificacion"/></div>
+	           </div>
+	           </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
