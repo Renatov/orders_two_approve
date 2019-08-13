@@ -1,0 +1,21 @@
+<odoo>
+ <record id="purchase_order_lines_extend" model="ir.ui.view"> 
+            <field name="name">Extension para aprobar ordenes de compra</field> <!--el nombre de la vista que vamos a inserter este sirve para traducer luego en lenguaje.bo  -->
+            <field name="model">purchase.order</field> <!--modelo al que pertenece la vista  -->
+            <field name="inherit_id" ref="purchase.purchase_order_form" /> <!--importante ref es el modulo primero se pone punto y seguido el id de la vista a la que vamos a inserter esta vista -->
+            <field name="arch" type="xml">
+			<xpath expr="//form/sheet/group/group/field[@name='partner_id']" position="after">
+			<field name="two_approval_purchase" invisible='1'/>
+			</xpath>
+			<xpath expr="//form/header/button[@id='draft_confirm']" position="replace">
+                <button name="button_confirm" type="object" states="draft,to approve,two_to_approve" string="Confirm Order" id="draft_confirm"/>
+			</xpath>
+			<xpath expr="//form/header/button[@name='button_approve']" position="replace">
+                <button name="button_approve" type="object" string="Aprobar orden" class="oe_highlight" groups="purchase.group_purchase_manager" attrs="{'invisible': ['|', ('two_approval_purchase','=',True), ('state','not in', ('to approve'))]}"/>
+			</xpath>
+			<xpath expr="//form/header/field[@name='state']" position="replace">
+				<field name="state" widget="statusbar" statusbar_visible="draft,sent,to approve,two_to_approve,approve,purchase" readonly="1"/>
+			</xpath>
+            </field> 
+</record>
+</odoo>
