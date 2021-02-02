@@ -9,7 +9,15 @@ import odoo.addons.decimal_precision as dp, ast
 
 class purchase_order(models.Model):
     _inherit = "purchase.order"
-    state = fields.Selection(selection_add=[('approve', 'Aprobado'), ('two_to_approve', 'Esperando Segunda aprobacion')])
+    state = fields.Selection([
+        ('draft', 'RFQ'),
+        ('sent', 'RFQ Sent'),
+        ('to approve', 'To Approve'),
+        ('approve', 'Primera aprobacion'), ('two_to_approve', 'Segunda aprobacion'),
+        ('purchase', 'Purchase Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled')
+    ], string='Status', readonly=True, index=True, copy=False, default='draft', track_visibility='onchange')
     two_approval_purchase = fields.Boolean(compute="_compute_two_approval")
     def _compute_two_approval(self):
         ICPSudo = self.env['ir.config_parameter'].sudo()
@@ -43,25 +51,28 @@ class purchase_order(models.Model):
             user_one_id=[user_one_id for user_one_id in user_one_ids if user_one_id==self._context['uid']]
             user_two_id=[user_two_id for user_two_id in user_two_ids if user_two_id==self._context['uid']]
             for order in self:
-                if not user_one_id and not user_two_id:
-                    if order.state == "draft":
-                        order.write({'state': 'to approve'})
-                        return False
-                    if order.state == "to approve":
-                        raise UserError(_("No tiene permiso para aprobar esta orden de compra"))
-                    if order.state == "two_to_approve":
-                        raise UserError(_("No tiene permiso para aprobar esta orden de compra esperando la segunda aprobacion"))  
-                if user_one_id:
-                    if order.state!='two_to_approve':
-                        order.write({'state': 'two_to_approve'})
-                        if not user_two_id:
-                            order.aprobar_sale = False
+                if order.company_id.po_double_validation_amount < order.amount_total:
+                    if not user_one_id and not user_two_id:
+                        if order.state == "draft":
+                            order.write({'state': 'to approve'})
                             return False
-                    else:
-                        if not user_two_id:
+                        if order.state == "to approve":
+                            raise UserError(_("No tiene permiso para aprobar esta orden de compra"))
+                        if order.state == "two_to_approve":
                             raise UserError(_("No tiene permiso para aprobar esta orden de compra esperando la segunda aprobacion"))  
-                if user_two_id:
-                    if order.state!='two_to_approve':
-                        raise UserError(_("No tiene permiso para aprobar esta orden de compra esperando la primera aprobacion"))  
-                    order.state = 'approve'
+                    if user_one_id:
+                        if order.state!='two_to_approve':
+                            order.write({'state': 'two_to_approve'})
+                            if not user_two_id:
+                                order.aprobar_sale = False
+                                return False
+                        else:
+                            if not user_two_id:
+                                raise UserError(_("No tiene permiso para aprobar esta orden de compra esperando la segunda aprobacion"))  
+                    if user_two_id:
+                        if order.state!='two_to_approve':
+                            raise UserError(_("No tiene permiso para aprobar esta orden de compra esperando la primera aprobacion"))  
+                        order.state = 'approve'
+                        order.button_approve()
+                else:
                     order.button_approve()
